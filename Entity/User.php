@@ -2,6 +2,7 @@
 
 namespace kudrmudr\SnDataProviderBundle\Entity;
 
+use kudrmudr\SnDataProviderBundle\Provider\AbstractProvider;
 /**
  * User
  */
@@ -32,12 +33,15 @@ class User
      */
     private $login;
 
+    /**
+     * @var string
+     */
+    private $image;
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
+    /**
+     * @param string $id
+     * @return $this
+     */
     public function setId(string $id)
     {
         $this->id = $id;
@@ -45,6 +49,18 @@ class User
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param $login
+     * @return $this
+     */
     public function setLogin($login)
     {
         $this->login = $login;
@@ -52,19 +68,29 @@ class User
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getLogin()
     {
         return $this->login;
     }
 
-    public function setProvider($provider)
+    /**
+     * @param AbstractProvider $provider
+     * @return $this
+     */
+    public function setProvider(AbstractProvider $provider)
     {
         $this->provider = $provider;
 
         return $this;
     }
 
-    public function getProvider()
+    /**
+     * @return AbstractProvider
+     */
+    public function getProvider() : AbstractProvider
     {
         return $this->provider;
     }
@@ -115,5 +141,23 @@ class User
     public function getLastName()
     {
         return $this->last_name;
+    }
+
+    /**
+     * @param string $image
+     * @return $this
+     */
+    public function setImage(string $image)
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getImage() : string
+    {
+        return $this->image;
     }
 }

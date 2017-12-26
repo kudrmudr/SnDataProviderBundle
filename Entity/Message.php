@@ -18,6 +18,11 @@ class Message
     private $text;
 
     /**
+     * @var array
+     */
+    private $images = array();
+
+    /**
      * @var User
      */
     private $user;
@@ -30,6 +35,10 @@ class Message
 
     }
 
+    /**
+     * @param string $id
+     * @return $this
+     */
     public function setId(string $id)
     {
         $this->id = $id;
@@ -37,8 +46,6 @@ class Message
     }
 
     /**
-     * Get id.
-     *
      * @return string
      */
     public function getId()
@@ -47,11 +54,8 @@ class Message
     }
 
     /**
-     * Set text.
-     *
-     * @param string $text
-     *
-     * @return Message
+     * @param $text
+     * @return $this
      */
     public function setText($text)
     {
@@ -61,8 +65,6 @@ class Message
     }
 
     /**
-     * Get text.
-     *
      * @return string
      */
     public function getText()
@@ -70,7 +72,10 @@ class Message
         return $this->text;
     }
 
-
+    /**
+     * @param User $user
+     * @return $this
+     */
     public function setUser(User $user)
     {
         $this->user = $user;
@@ -79,12 +84,28 @@ class Message
     }
 
     /**
-     * Get user.
-     *
      * @return User
      */
     public function getUser() : User
     {
         return $this->user;
+    }
+
+    /**
+     * @param string $image
+     * @return $this
+     */
+    public function addImage(string $image)
+    {
+        $this->images[] = $image;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getImages() : array
+    {
+        return $this->images;
     }
 }

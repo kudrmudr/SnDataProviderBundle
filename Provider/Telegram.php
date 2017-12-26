@@ -3,6 +3,7 @@
 namespace kudrmudr\SnDataProviderBundle\Provider;
 
 use GuzzleHttp\Client;
+use kudrmudr\SnDataProviderBundle\Entity\User;
 
 class Telegram extends AbstractProvider
 {
@@ -69,7 +70,7 @@ class Telegram extends AbstractProvider
      * @return mixed
      * @throws \Exception
      */
-    public function getUser(string $userId)
+    public function getUser(string $userId) : ?User
     {
         $response = $this->client->get('getUserProfilePhotos', [
             'query' => [
@@ -77,7 +78,25 @@ class Telegram extends AbstractProvider
             ]
         ]);
 
-        return $this->json($response);
+        if ($response = $this->json($response)) {
+
+
+            $user = new User();
+            $user->setProvider($this);
+            $user->setId($userId);
+
+            if (isset($response['result']['photos'][0][0])) {
+
+                $user->setImage(
+                    $this->getFile($response['result']['photos'][0][1]['file_id'])
+                );
+
+            }
+
+            return $user;
+        }
+
+        return null;
     }
 
 

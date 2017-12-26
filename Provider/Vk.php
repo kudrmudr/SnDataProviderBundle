@@ -3,6 +3,7 @@
 namespace kudrmudr\SnDataProviderBundle\Provider;
 
 use GuzzleHttp\Client;
+use kudrmudr\SnDataProviderBundle\Entity\User;
 
 class Vk extends AbstractProvider
 {
@@ -45,24 +46,33 @@ class Vk extends AbstractProvider
     }
 
     /**
-     * @param $userId
-     * @return mixed
-     * @throws \Exception
+     * @param string $userId
+     * @return User|null
      */
-    public function getUser(string $userId)
+    public function getUser(string $userId) : ?User
     {
         $response = $this->client->get('users.get', [
             'query' => [
                 'user_ids' => $userId,
-                'fields' => 'photo_400_orig,photo_200_orig',
+                'fields' => 'photo_max_orig',
             ]
         ]);
 
         if ($res = $this->json($response)) {
-            if ($res1 = array_shift($res)) {
-                return $res1[0];
+            if (isset($res['response'])) {
+                $vkUser = $res['response'][0];
+
+                $user = new User();
+                $user->setProvider($this);
+                $user->setId($vkUser['uid']);
+                $user->setFirstName($vkUser['first_name']);
+                $user->setLastName($vkUser['last_name']);
+                $user->setImage($vkUser['photo_max_orig']);
+                return $user;
             }
         }
+
+        return null;
     }
 
     public function sendImages(string $userId, Array $images)

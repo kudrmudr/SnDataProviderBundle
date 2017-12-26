@@ -2,11 +2,13 @@
 
 namespace kudrmudr\SnDataProviderBundle\Provider;
 
+use kudrmudr\SnDataProviderBundle\Entity\User;
+
 abstract class AbstractProvider
 {
     abstract public function sendMessage(string $userId, string $text);
     
-    abstract public function getUser(string $userId);
+    abstract public function getUser(string $userId) : ?User;
 
     public function json($response) {
         $obj = json_decode($response->getBody(), true);
