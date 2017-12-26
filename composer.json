@@ -1,0 +1,26 @@
+{
+  "name": "kudrmudr/sn-data-provider-bundle",
+  "description": "",
+  "type": "library",
+  "license": "Proprietary",
+  "authors": [
+    {
+      "name": "",
+      "email": "kudrikkk@yandex.ru"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": "^7.0",
+    "symfony/framework-bundle": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "kudrmudr\\SnDataProviderBundle\\": ""
+    }
+  },
+  "require-dev": {
+
+  }
+}

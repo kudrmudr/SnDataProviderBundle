@@ -1,0 +1,4 @@
+services:
+#    sn_provider.example:
+#        class: kudrmudr\SnProviderBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
