@@ -14,7 +14,7 @@ class User
     private $id;
 
     /**
-     * @var object
+     * @var AbstractProvider
      */
     private $provider;
 

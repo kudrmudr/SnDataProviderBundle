@@ -1,11 +1,11 @@
 sn_provider_vk:
   path:     /vk
-  defaults: { _controller: AppBundle:Default:vk }
+  defaults: { _controller: SnDataProviderBundle:Default:vk }
 
 sn_provider_telegram:
   path:     /telegram
-  defaults: { _controller: AppBundle:Default:telegram }
+  defaults: { _controller: SnDataProviderBundle:Default:telegram }
 
 sn_provider_facebook:
   path:     /facebook
-  defaults: { _controller: AppBundle:Default:facebook }
+  defaults: { _controller: SnDataProviderBundle:Default:facebook }
