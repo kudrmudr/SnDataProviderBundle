@@ -17,6 +17,14 @@ use kudrmudr\SnDataProviderBundle\Event\MessageEvent;
 
 class DefaultController extends Controller
 {
+    protected function messageEventDispatch(Message $message)
+    {
+        $this->container->get('event_dispatcher')->dispatch(
+            'sn_data_provider_message_event',
+            new MessageEvent($message)
+        );
+    }
+
     public function vkAction(Request $request)
     {
         if ($content = $request->getContent() AND $data = json_decode($content, true)) {
@@ -31,10 +39,7 @@ class DefaultController extends Controller
                 $message->setUser($user);
                 $message->setText($data['object']['body']);
 
-                $this->container->get('event_dispatcher')->dispatch(
-                    'sn_data_provider_message_event',
-                    new MessageEvent($message)
-                );
+                $this->messageEventDispatch($message);
             }
         }
 
@@ -55,16 +60,36 @@ class DefaultController extends Controller
             $message->setUser($user);
             $message->setText($data['message']['text']);
 
-            $this->container->get('event_dispatcher')->dispatch(
-                'sn_data_provider_message_event',
-                new MessageEvent($message)
-            );
+            $this->messageEventDispatch($message);
         }
         return new Response('ok');
     }
 
     public function facebookAction(Request $request)
     {
+        if ($content = $request->getContent() AND $data = json_decode($content, true)) {
+
+            if (!empty($data['entry'][0]['messaging'])) {
+
+                foreach ($data['entry'][0]['messaging'] as $fbMessage) {
+
+                    if ($fbMessage['message']['text']) {
+
+                        $user = new User();
+                        $user->setExId($fbMessage['sender']['id']);
+                        $user->setProviderName(Telegram::class);
+
+                        $message = new Message();
+                        $message->setUser($user);
+                        $message->setText($fbMessage['message']['text']);
+
+                        $this->messageEventDispatch($message);
+                    }
+                }
+            }
+        }
+
+
         return new Response('ok');
     }
 }
