@@ -54,13 +54,12 @@ class Vk extends AbstractProvider
                 $language->setName('Русский');
 
                 $user = new User();
+                $user->setLanguage($language);
                 $user->setProviderName(self::class);
                 $user->setExId($vkUser['uid']);
                 $user->setFirstName($vkUser['first_name']);
                 $user->setLastName($vkUser['last_name']);
                 $user->setImage($vkUser['photo_max_orig']);
-                $user->setLanguage($language);
-
                 return $user;
             }
         }

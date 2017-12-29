@@ -2,13 +2,18 @@
 
 namespace kudrmudr\SnDataProviderBundle\Provider;
 
-use GuzzleHttp\Client;
+use kudrmudr\SnDataProviderBundle\Entity\Language;
 use kudrmudr\SnDataProviderBundle\Entity\User;
 
 class Telegram extends AbstractProvider
 {
 
     const API_HOST = 'https://api.telegram.org/bot';
+
+    private function getApiUrl()
+    {
+        return self::API_HOST . $this->accessToken . '/';
+    }
 
     /**
      * @param $userId
@@ -21,7 +26,7 @@ class Telegram extends AbstractProvider
     {
         if ($text) {
 
-            $response = $this->client->post('sendMessage', [
+            $response = $this->client->post($this->getApiUrl() . 'sendMessage', [
                 'json' => [
                     'chat_id' => $userId,
                     'text' => $text
@@ -36,14 +41,14 @@ class Telegram extends AbstractProvider
     {
         foreach ($images as $image) {
 
-            $this->client->post('sendPhoto', [
+            $this->client->post($this->getApiUrl() . 'sendPhoto', [
                 'multipart' => [
                     [
-                        'name'     => 'chat_id',
+                        'name' => 'chat_id',
                         'contents' => $userId
                     ],
                     [
-                        'name'     => 'photo',
+                        'name' => 'photo',
                         'contents' => fopen($image, 'r')
                     ]
                 ]
@@ -56,9 +61,9 @@ class Telegram extends AbstractProvider
      * @return mixed
      * @throws \Exception
      */
-    public function getUser(string $userId) : ?User
+    public function getUser(string $userId): ?User
     {
-        $response = $this->client->get('getUserProfilePhotos', [
+        $response = $this->client->get($this->getApiUrl() . 'getUserProfilePhotos', [
             'query' => [
                 'user_id' => $userId
             ]
@@ -66,17 +71,21 @@ class Telegram extends AbstractProvider
 
         if ($response = $this->json($response)) {
 
+            $language = new Language();
+            $language->setCode('en');
+            $language->setName('English');
 
             $user = new User();
-            $user->setProvider($this);
-            $user->setId($userId);
+            $user->setLanguage($language);
+            $user->setProviderName(self::class);
+            $user->setExId($userId);
+            //@TODO get usr name and sername
 
             if (isset($response['result']['photos'][0][0])) {
 
                 $user->setImage(
                     $this->getFile($response['result']['photos'][0][1]['file_id'])
                 );
-
             }
 
             return $user;
@@ -88,7 +97,7 @@ class Telegram extends AbstractProvider
 
     public function getFile(string $file_id)
     {
-        $response = $this->client->get('getFile', [
+        $response = $this->client->get($this->getApiUrl() . 'getFile', [
             'query' => [
                 'file_id' => $file_id
             ]
@@ -96,7 +105,7 @@ class Telegram extends AbstractProvider
 
         $response = $this->json($response);
 
-        return 'https://api.telegram.org/file/bot'.$this->accessToken.'/'.$response['result']['file_path'];
+        return 'https://api.telegram.org/file/bot' . $this->accessToken . '/' . $response['result']['file_path'];
     }
 
     /**
@@ -106,7 +115,7 @@ class Telegram extends AbstractProvider
      */
     public function setWebhook($url)
     {
-        $response = $this->client->post('setWebhook', [
+        $response = $this->client->post($this->getApiUrl() . 'setWebhook', [
             'json' => [
                 'url' => $url
             ]
@@ -121,7 +130,7 @@ class Telegram extends AbstractProvider
      */
     public function getWebhook()
     {
-        $response = $this->client->get('getWebhookInfo');
+        $response = $this->client->get($this->getApiUrl() . 'getWebhookInfo');
 
         return $this->json($response);
     }
