@@ -11,6 +11,7 @@ use kudrmudr\SnDataProviderBundle\Entity\User;
 class Facebook extends AbstractProvider
 {
 
+
     protected $accessToken;
     protected $client;
 

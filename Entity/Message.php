@@ -10,54 +10,48 @@ class Message
     /**
      * @var string
      */
-    private $id;
+    protected $ex_id;
 
     /**
      * @var string
      */
-    private $text;
+    protected $text;
+
+    protected $created;
 
     /**
      * @var array
      */
-    private $images = array();
+    protected $images = array();
 
     /**
      * @var User
      */
-    private $user;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-
-    }
+    protected $user;
 
     /**
      * @param string $id
      * @return $this
      */
-    public function setId(string $id)
+    public function setExId(string $ex_id)
     {
-        $this->id = $id;
+        $this->ex_id = $ex_id;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getId()
+    public function getExId(): string
     {
-        return $this->id;
+        return $this->ex_id;
     }
 
     /**
      * @param $text
      * @return $this
      */
-    public function setText($text)
+    public function setText(string $text)
     {
         $this->text = $text;
 
@@ -70,6 +64,27 @@ class Message
     public function getText()
     {
         return $this->text;
+    }
+
+    /**
+     * @param \DateTime $created
+     * @return $this
+     */
+    public function setCreated(\DateTime $created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created.
+     *
+     * @return \DateTime
+     */
+    public function getCreated(): \DateTime
+    {
+        return $this->created;
     }
 
     /**

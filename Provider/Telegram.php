@@ -7,6 +7,7 @@ use kudrmudr\SnDataProviderBundle\Entity\User;
 
 class Telegram extends AbstractProvider
 {
+
     const API_HOST = 'https://api.telegram.org/bot';
 
     protected $accessToken;

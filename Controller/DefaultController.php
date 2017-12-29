@@ -18,11 +18,6 @@ use kudrmudr\SnDataProviderBundle\Event\MessageWebhookEvent;
 
 class DefaultController extends Controller
 {
-    public function indexAction()
-    {
-        echo 11122;
-    }
-
     public function vkAction(Request $request)
     {
         if ($content = $request->getContent() AND $data = json_decode($content, true)) {
@@ -30,8 +25,8 @@ class DefaultController extends Controller
             if ($data['type'] == 'message_new') {
 
                 $user = new User();
-                $user->setId($data['object']['user_id']);
-                $user->setProvider($this->get(Vk::class));
+                $user->setExId($data['object']['user_id']);
+                $user->setProviderName(Vk::class);
 
                 $message = new Message();
                 $message->setUser($user);
@@ -50,12 +45,12 @@ class DefaultController extends Controller
     public function telegramAction(Request $request)
     {
 
-
+        return new Response('ok');
     }
 
     public function facebookAction(Request $request)
     {
 
-
+        return new Response('ok');
     }
 }

@@ -7,4 +7,8 @@ services:
         arguments:
               $accessToken: %telegram_access_token%
 
+    kudrmudr\SnDataProviderBundle\Provider\Facebook:
+        arguments:
+              $accessToken: %facebook_access_token%
+
     kudrmudr\SnDataProviderBundle\Service\Driver:

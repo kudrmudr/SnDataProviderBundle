@@ -60,11 +60,12 @@ class Vk extends AbstractProvider
 
         if ($res = $this->json($response)) {
             if (isset($res['response'])) {
+                
                 $vkUser = $res['response'][0];
 
                 $user = new User();
-                $user->setProvider($this);
-                $user->setId($vkUser['uid']);
+                $user->setProviderName(self::class);
+                $user->setExId($vkUser['uid']);
                 $user->setFirstName($vkUser['first_name']);
                 $user->setLastName($vkUser['last_name']);
                 $user->setImage($vkUser['photo_max_orig']);

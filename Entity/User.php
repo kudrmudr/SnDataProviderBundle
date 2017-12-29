@@ -8,53 +8,55 @@ use kudrmudr\SnDataProviderBundle\Provider\AbstractProvider;
  */
 class User
 {
-    /**
-     * @var string
-     */
-    private $id;
 
-    /**
-     * @var AbstractProvider
-     */
-    private $provider;
+    protected $ex_id;
 
-    /**
-     * @var string|null
-     */
-    private $first_name;
+    protected $provider_name;
 
-    /**
-     * @var string|null
-     */
-    private $last_name;
+    protected $language;
 
-    /**
-     * @var string
-     */
-    private $login;
+    protected $first_name;
 
-    /**
-     * @var string
-     */
-    private $image;
+    protected $last_name;
 
-    /**
-     * @param string $id
-     * @return $this
-     */
-    public function setId(string $id)
+    protected $login;
+
+    protected $image;
+
+    public function setExId(string $ex_id)
     {
-        $this->id = $id;
+        $this->ex_id = $ex_id;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getId()
+    public function getExId(): string
     {
-        return $this->id;
+        return $this->ex_id;
+    }
+
+    public function setProviderName(string $provider_nam)
+    {
+        $this->provider_name = $provider_nam;
+
+        return $this;
+    }
+
+    public function getProviderName(): string
+    {
+        return $this->provider_name;
+    }
+
+    public function setLanguage(Language $language)
+    {
+        $this->language = $language;
+
+        return $this;
+    }
+
+    public function getLanguage(): ?Language
+    {
+        return $this->language;
     }
 
     /**
@@ -74,25 +76,6 @@ class User
     public function getLogin()
     {
         return $this->login;
-    }
-
-    /**
-     * @param AbstractProvider $provider
-     * @return $this
-     */
-    public function setProvider(AbstractProvider $provider)
-    {
-        $this->provider = $provider;
-
-        return $this;
-    }
-
-    /**
-     * @return AbstractProvider
-     */
-    public function getProvider() : AbstractProvider
-    {
-        return $this->provider;
     }
 
     /**
