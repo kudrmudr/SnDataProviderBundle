@@ -32,7 +32,7 @@ class DefaultController extends Controller
                 $message->setText($data['object']['body']);
 
                 $this->container->get('event_dispatcher')->dispatch(
-                    'sn_data_provider_message_webhook_event',
+                    'sn_data_provider_message_event',
                     new MessageEvent($message)
                 );
             }
@@ -43,13 +43,28 @@ class DefaultController extends Controller
 
     public function telegramAction(Request $request)
     {
+        if ($content = $request->getContent() AND $data = json_decode($content, true)) {
 
+            $user = new User();
+            $user->setExId($data['message']['from']['id']);
+            $user->setProviderName(Telegram::class);
+            $user->setFirstName($data['message']['from']['first_name']);
+            $user->setLastName($data['message']['from']['last_name']);
+
+            $message = new Message();
+            $message->setUser($user);
+            $message->setText($data['message']['text']);
+
+            $this->container->get('event_dispatcher')->dispatch(
+                'sn_data_provider_message_event',
+                new MessageEvent($message)
+            );
+        }
         return new Response('ok');
     }
 
     public function facebookAction(Request $request)
     {
-
         return new Response('ok');
     }
 }

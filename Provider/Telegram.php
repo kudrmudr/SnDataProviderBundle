@@ -72,8 +72,8 @@ class Telegram extends AbstractProvider
         if ($response = $this->json($response)) {
 
             $language = new Language();
-            $language->setCode('en');
-            $language->setName('English');
+            $language->setCode('ru');
+            $language->setName('Русский');
 
             $user = new User();
             $user->setLanguage($language);
