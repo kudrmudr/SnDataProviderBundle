@@ -77,7 +77,7 @@ class DefaultController extends Controller
 
                         $user = new User();
                         $user->setExId($fbMessage['sender']['id']);
-                        $user->setProviderName(Telegram::class);
+                        $user->setProviderName(Facebook::class);
 
                         $message = new Message();
                         $message->setUser($user);
