@@ -2,15 +2,21 @@
 
 namespace kudrmudr\SnDataProviderBundle\Provider;
 
-use kudrmudr\SnDataProviderBundle\Entity\User;
+use GuzzleHttp\Client;
 
-abstract class AbstractProvider
+abstract class AbstractProvider implements ProviderInterface
 {
-    abstract public function sendMessage(string $userId, string $text);
-    
-    abstract public function getUser(string $userId) : ?User;
+    protected $accessToken;
+    protected $client;
 
-    public function json($response) {
+    public function __construct(string $accessToken, Client $client)
+    {
+        $this->accessToken = $accessToken;
+        $this->client = $client;
+    }
+
+    public function json($response)
+    {
         $obj = json_decode($response->getBody(), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {

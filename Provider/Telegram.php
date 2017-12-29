@@ -10,21 +10,6 @@ class Telegram extends AbstractProvider
 
     const API_HOST = 'https://api.telegram.org/bot';
 
-    protected $accessToken;
-    protected $client;
-
-    /**
-     * Telegram constructor.
-     */
-    public function __construct(string $accessToken)
-    {
-        $this->accessToken = $accessToken;
-
-        $this->client = new Client([
-            'base_uri' => self::API_HOST . $this->accessToken . '/',
-        ]);
-    }
-
     /**
      * @param $userId
      * @param $data

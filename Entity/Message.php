@@ -7,26 +7,14 @@ namespace kudrmudr\SnDataProviderBundle\Entity;
  */
 class Message
 {
-    /**
-     * @var string
-     */
     protected $ex_id;
 
-    /**
-     * @var string
-     */
     protected $text;
 
     protected $created;
 
-    /**
-     * @var array
-     */
     protected $images = array();
 
-    /**
-     * @var User
-     */
     protected $user;
 
     /**
@@ -61,7 +49,7 @@ class Message
     /**
      * @return string
      */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
@@ -101,7 +89,7 @@ class Message
     /**
      * @return User
      */
-    public function getUser() : User
+    public function getUser(): User
     {
         return $this->user;
     }
@@ -119,7 +107,7 @@ class Message
     /**
      * @return array
      */
-    public function getImages() : array
+    public function getImages(): array
     {
         return $this->images;
     }

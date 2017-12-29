@@ -5,7 +5,7 @@ namespace kudrmudr\SnDataProviderBundle\Event;
 use Symfony\Component\EventDispatcher\Event;
 use kudrmudr\SnDataProviderBundle\Entity\Message;
 
-class MessageWebhookEvent extends Event
+class MessageEvent extends Event
 {
     protected $message;
 
@@ -14,7 +14,7 @@ class MessageWebhookEvent extends Event
         $this->message = $message;
     }
 
-    public function getMessage() : Message
+    public function getMessage(): Message
     {
         return $this->message;
     }

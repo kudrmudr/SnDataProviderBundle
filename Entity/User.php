@@ -2,13 +2,11 @@
 
 namespace kudrmudr\SnDataProviderBundle\Entity;
 
-use kudrmudr\SnDataProviderBundle\Provider\AbstractProvider;
 /**
  * User
  */
 class User
 {
-
     protected $ex_id;
 
     protected $provider_name;
@@ -54,7 +52,7 @@ class User
         return $this;
     }
 
-    public function getLanguage(): ?Language
+    public function getLanguage(): Language
     {
         return $this->language;
     }
@@ -63,7 +61,7 @@ class User
      * @param $login
      * @return $this
      */
-    public function setLogin($login)
+    public function setLogin(string $login)
     {
         $this->login = $login;
 
@@ -73,18 +71,12 @@ class User
     /**
      * @return string
      */
-    public function getLogin()
+    public function getLogin(): ?string
     {
         return $this->login;
     }
 
-    /**
-     * Set firstName.
-     *
-     * @param string|null $firstName
-     *
-     * @return User
-     */
+
     public function setFirstName($firstName = null)
     {
         $this->first_name = $firstName;
@@ -92,12 +84,7 @@ class User
         return $this;
     }
 
-    /**
-     * Get firstName.
-     *
-     * @return string|null
-     */
-    public function getFirstName()
+    public function getFirstName(): ?string
     {
         return $this->first_name;
     }
@@ -121,7 +108,7 @@ class User
      *
      * @return string|null
      */
-    public function getLastName()
+    public function getLastName(): ?string
     {
         return $this->last_name;
     }
@@ -139,7 +126,7 @@ class User
     /**
      * @return string
      */
-    public function getImage() : string
+    public function getImage(): ?string
     {
         return $this->image;
     }

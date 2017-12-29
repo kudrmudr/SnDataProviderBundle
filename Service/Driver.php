@@ -2,20 +2,26 @@
 
 namespace kudrmudr\SnDataProviderBundle\Service;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use kudrmudr\SnDataProviderBundle\Entity\Message;
 
 class Driver
 {
+    protected $service_container;
+
+    public function __construct(ContainerInterface $service_container)
+    {
+        $this->service_container = $service_container;
+    }
 
     function send(Message $message)
     {
         $user = $message->getUser();
 
-        $provider = $user->getProvider();
+        $provider = $this->service_container->get($user->getProviderName());
 
-        $provider->sendMessage($user->getId(), $message->getText());
+        $provider->sendMessage($user->getExId(), $message->getText());
 
-        $provider->sendImages($user->getId(), $message->getImages());
-
+        $provider->sendImages($user->getExId(), $message->getImages());
     }
 }

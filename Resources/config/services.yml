@@ -1,14 +1,21 @@
 services:
+    GuzzleHttp\Client:
+
     kudrmudr\SnDataProviderBundle\Provider\Vk:
         arguments:
               $accessToken: %vk_access_token%
+              $client: '@GuzzleHttp\Client'
 
     kudrmudr\SnDataProviderBundle\Provider\Telegram:
         arguments:
               $accessToken: %telegram_access_token%
+              $client: '@GuzzleHttp\Client'
 
     kudrmudr\SnDataProviderBundle\Provider\Facebook:
         arguments:
               $accessToken: %facebook_access_token%
+              $client: '@GuzzleHttp\Client'
 
     kudrmudr\SnDataProviderBundle\Service\Driver:
+        arguments:
+              $service_container: '@service_container'

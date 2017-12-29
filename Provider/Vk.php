@@ -2,28 +2,12 @@
 
 namespace kudrmudr\SnDataProviderBundle\Provider;
 
-use GuzzleHttp\Client;
+use kudrmudr\SnDataProviderBundle\Entity\Language;
 use kudrmudr\SnDataProviderBundle\Entity\User;
 
 class Vk extends AbstractProvider
 {
     const API_HOST = 'https://api.vk.com/method/';
-
-    protected $accessToken;
-    protected $client;
-
-    /**
-     * Vk constructor.
-     * @param string $accessToken
-     */
-    public function __construct(string $accessToken)
-    {
-        $this->accessToken = $accessToken;
-
-        $this->client = new Client([
-            'base_uri' => self::API_HOST,
-        ]);
-    }
 
     /**
      * @param string $userId
@@ -32,26 +16,29 @@ class Vk extends AbstractProvider
      */
     public function sendMessage(string $userId, string $text)
     {
-        $response = $this->client->post('messages.send', [
-            'form_params' => [
-                'user_id' => $userId,
-                'message' => $text
-            ],
-            'query' => [
-                'access_token' => $this->accessToken
-            ]
-        ]);
+        if ($text) {
 
-        return $this->json($response);
+            $response = $this->client->post(self::API_HOST . 'messages.send', [
+                'form_params' => [
+                    'user_id' => $userId,
+                    'message' => $text
+                ],
+                'query' => [
+                    'access_token' => $this->accessToken
+                ]
+            ]);
+
+            return $this->json($response);
+        }
     }
 
     /**
      * @param string $userId
      * @return User|null
      */
-    public function getUser(string $userId) : ?User
+    public function getUser(string $userId): ?User
     {
-        $response = $this->client->get('users.get', [
+        $response = $this->client->get(self::API_HOST . 'users.get', [
             'query' => [
                 'user_ids' => $userId,
                 'fields' => 'photo_max_orig',
@@ -60,8 +47,11 @@ class Vk extends AbstractProvider
 
         if ($res = $this->json($response)) {
             if (isset($res['response'])) {
-                
                 $vkUser = $res['response'][0];
+
+                $language = new Language();
+                $language->setCode('ru');
+                $language->setName('Русский');
 
                 $user = new User();
                 $user->setProviderName(self::class);
@@ -69,6 +59,8 @@ class Vk extends AbstractProvider
                 $user->setFirstName($vkUser['first_name']);
                 $user->setLastName($vkUser['last_name']);
                 $user->setImage($vkUser['photo_max_orig']);
+                $user->setLanguage($language);
+
                 return $user;
             }
         }
@@ -78,7 +70,7 @@ class Vk extends AbstractProvider
 
     public function sendImages(string $userId, Array $images)
     {
-        $response = $this->client->get('photos.getMessagesUploadServer', [
+        $response = $this->client->get(self::API_HOST . 'photos.getMessagesUploadServer', [
             'query' => [
                 'access_token' => $this->accessToken
             ]
@@ -88,13 +80,9 @@ class Vk extends AbstractProvider
 
             $uploadserver = array_shift($uploadserver);
 
-            $uploadserver_url = $uploadserver['upload_url'];
-
             foreach ($images as $image_path) {
 
-                $client = new Client();
-
-                if ($response = $client->request('POST', $uploadserver_url, [
+                if ($response = $this->client->request('POST', $uploadserver['upload_url'], [
                     'multipart' => [
                         [
                             'name' => 'photo',
@@ -106,8 +94,7 @@ class Vk extends AbstractProvider
 
                     $img_uploaded_result = $this->json($response);
 
-
-                    $img_response = $this->client->post('photos.saveMessagesPhoto', [
+                    $img_response = $this->client->post(self::API_HOST . 'photos.saveMessagesPhoto', [
                         'form_params' => $img_uploaded_result,
                         'query' => [
                             'access_token' => $this->accessToken
@@ -116,10 +103,10 @@ class Vk extends AbstractProvider
 
                     if ($img_to_att = $this->json($img_response)) {
 
-                        $this->client->post('messages.send', [
+                        $this->client->post(self::API_HOST . 'messages.send', [
                             'form_params' => array(
                                 'user_id' => $userId,
-                                'attachment' => 'photo'.$img_to_att['response'][0]['owner_id'].'_'.$img_to_att['response'][0]['pid'],
+                                'attachment' => 'photo' . $img_to_att['response'][0]['owner_id'] . '_' . $img_to_att['response'][0]['pid'],
                             ),
                             'query' => [
                                 'access_token' => $this->accessToken

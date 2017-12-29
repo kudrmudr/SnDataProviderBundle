@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use kudrmudr\SnDataProviderBundle\Provider\AbstractProvider;
 use kudrmudr\SnDataProviderBundle\Provider\Vk;
 use kudrmudr\SnDataProviderBundle\Provider\Telegram;
 use kudrmudr\SnDataProviderBundle\Provider\Facebook;
@@ -14,7 +13,7 @@ use kudrmudr\SnDataProviderBundle\Provider\Facebook;
 use kudrmudr\SnDataProviderBundle\Entity\User;
 use kudrmudr\SnDataProviderBundle\Entity\Message;
 
-use kudrmudr\SnDataProviderBundle\Event\MessageWebhookEvent;
+use kudrmudr\SnDataProviderBundle\Event\MessageEvent;
 
 class DefaultController extends Controller
 {
@@ -34,7 +33,7 @@ class DefaultController extends Controller
 
                 $this->container->get('event_dispatcher')->dispatch(
                     'sn_data_provider_message_webhook_event',
-                    new MessageWebhookEvent($message)
+                    new MessageEvent($message)
                 );
             }
         }

@@ -12,20 +12,6 @@ class Facebook extends AbstractProvider
 {
 
 
-    protected $accessToken;
-    protected $client;
-
-    /**
-     * Facebook constructor.
-     * @param string $accessToken
-     */
-    public function __construct(string $accessToken)
-    {
-        $this->accessToken = $accessToken;
-        //$this->client = new FbBotApp($accessToken);
-
-    }
-
     /**
      * @param $userId
      * @param $data
