@@ -43,6 +43,8 @@ class DefaultController extends Controller
             }
         }
 
+        $this->container->get('logger')->error('VK----'.$request->getContent());
+
         return new Response('ok');
     }
 
