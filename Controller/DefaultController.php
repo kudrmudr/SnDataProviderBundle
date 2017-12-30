@@ -89,7 +89,14 @@ class DefaultController extends Controller
             }
         }
 
+        return new Response('ok');
+    }
+
+    public function twitterAction(Request $request)
+    {
+        $this->container->get('logger')->error('twitter'.$request->getContent());
 
         return new Response('ok');
     }
+
 }

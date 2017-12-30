@@ -16,6 +16,11 @@ services:
               $accessToken: %facebook_access_token%
               $client: '@GuzzleHttp\Client'
 
+    kudrmudr\SnDataProviderBundle\Provider\Twitter:
+        arguments:
+              $accessToken: %twitter_access_token%
+              $client: '@GuzzleHttp\Client'
+
     kudrmudr\SnDataProviderBundle\Service\Driver:
         arguments:
               $service_container: '@service_container'
