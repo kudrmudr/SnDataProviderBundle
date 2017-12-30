@@ -20,8 +20,6 @@ class Driver
 
         $provider = $this->service_container->get($user->getProviderName());
 
-        $provider->sendMessage($user->getExId(), $message->getText());
-
-        $provider->sendImages($user->getExId(), $message->getImages());
+        $provider->sendMessage($message);
     }
 }

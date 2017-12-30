@@ -4,61 +4,16 @@ namespace kudrmudr\SnDataProviderBundle\Provider;
 
 use kudrmudr\SnDataProviderBundle\Entity\Language;
 use kudrmudr\SnDataProviderBundle\Entity\User;
+use kudrmudr\SnDataProviderBundle\Entity\Message;
 
 class Facebook extends AbstractProvider
 {
 
     const API_HOST = 'https://graph.facebook.com/v2.11/';
 
-    public function sendMessage(string $userId, string $text)
-    {
-        if ($text) {
-
-            $response = $this->client->post(self::API_HOST . 'me/messages', [
-                'form_params' => [
-                    'recipient' => ['id' => $userId],
-                    'message' => ['text' => $text]
-                ],
-                'query' => [
-                    'access_token' => $this->accessToken
-                ]
-            ]);
-
-            return $this->json($response);
-        }
-    }
-
-    public function sendImages(string $userId, Array $images)
-    {
-
-         foreach ($images as $image) {
-
-             $response = $this->client->post(self::API_HOST . 'me/messages', [
-                 'multipart' => [
-                     [
-                         'name' => 'recipient',
-                         'contents' => '{"id": "'.$userId.'"}',
-                     ],
-                     [
-                         'name' => 'message',
-                         'contents' => '{"attachment":{"type":"image", "payload":{"is_reusable":true}}}',
-                     ],
-                     [
-                         'name' => 'filedata',
-                         'contents' => fopen($image, 'r')
-                     ]
-                 ],
-                 'query' => [
-                     'access_token' => $this->accessToken
-                 ]
-             ]);
-         }
-    }
-
     /**
-     * @param $userId
-     * @return mixed
-     * @throws \Exception
+     * @param string $userId
+     * @return User|null
      */
     public function getUser(string $userId): ?User
     {
@@ -85,5 +40,54 @@ class Facebook extends AbstractProvider
             return $user;
         }
         return null;
+    }
+
+    /**
+     * @param Message $message
+     * @return mixed
+     */
+    public function sendMessage(Message $message)
+    {
+        if ($message->getText()) {
+
+            $this->client->post(self::API_HOST . 'me/messages', [
+                'form_params' => [
+                    'recipient' => ['id' => $message->getUser()->getExId()],
+                    'message' => ['text' => $message->getText()]
+                ],
+                'query' => [
+                    'access_token' => $this->accessToken
+                ]
+            ]);
+        }
+
+        foreach ($message->getAttachments() as $attachment) {
+
+            $this->client->post(self::API_HOST . 'me/messages', [
+                'multipart' => [
+                    [
+                        'name' => 'recipient',
+                        'contents' => '{"id": "'.$message->getUser()->getExId().'"}',
+                    ],
+                    [
+                        'name' => 'message',
+                        'contents' => '{                                 
+                              "attachment":
+                                    {
+                                        "type":"'.$attachment->getType().'",
+                                        "payload": { "is_reusable":true }
+                                    }
+                              }',
+                    ],
+                    [
+                        'name' => 'filedata',
+                        'contents' => fopen($attachment->getFile(), 'r')
+                    ]
+                ],
+                'query' => [
+                    'access_token' => $this->accessToken
+                ]
+            ]);
+        }
     }
 }

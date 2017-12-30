@@ -4,33 +4,11 @@ namespace kudrmudr\SnDataProviderBundle\Provider;
 
 use kudrmudr\SnDataProviderBundle\Entity\Language;
 use kudrmudr\SnDataProviderBundle\Entity\User;
+use kudrmudr\SnDataProviderBundle\Entity\Message;
 
 class Vk extends AbstractProvider
 {
     const API_HOST = 'https://api.vk.com/method/';
-
-    /**
-     * @param string $userId
-     * @param string $text
-     * @return mixed
-     */
-    public function sendMessage(string $userId, string $text)
-    {
-        if ($text) {
-
-            $response = $this->client->post(self::API_HOST . 'messages.send', [
-                'form_params' => [
-                    'user_id' => $userId,
-                    'message' => $text
-                ],
-                'query' => [
-                    'access_token' => $this->accessToken
-                ]
-            ]);
-
-            return $this->json($response);
-        }
-    }
 
     /**
      * @param string $userId
@@ -67,50 +45,76 @@ class Vk extends AbstractProvider
         return null;
     }
 
-    public function sendImages(string $userId, Array $images)
+    /**
+     * @param string $userId
+     * @param string $text
+     * @return mixed
+     */
+    public function sendMessage(Message $message)
     {
-        $response = $this->client->get(self::API_HOST . 'photos.getMessagesUploadServer', [
-            'query' => [
-                'access_token' => $this->accessToken
-            ]
-        ]);
+        if ($message->getText()) {
 
-        if ($uploadserver = $this->json($response)) {
+            $this->client->post(self::API_HOST . 'messages.send', [
+                'form_params' => [
+                    'user_id' => $message->getUser()->getExId(),
+                    'message' => $message->getText()
+                ],
+                'query' => [
+                    'access_token' => $this->accessToken
+                ]
+            ]);
+        }
 
-            $uploadserver = array_shift($uploadserver);
+        $this->sendImages($message->getUser()->getExId(), $message->getAttachments());
+    }
 
-            foreach ($images as $image_path) {
+    protected function sendImages(string $userId, Array $attachments)
+    {
+        if (count($attachments)>0) {
 
-                if ($response = $this->client->request('POST', $uploadserver['upload_url'], [
-                    'multipart' => [
-                        [
-                            'name' => 'photo',
-                            'contents' => fopen($image_path, 'r'),
-                        ],
-                    ]
-                ])
-                ) {
+            $response = $this->client->get(self::API_HOST . 'photos.getMessagesUploadServer', [
+                'query' => [
+                    'access_token' => $this->accessToken
+                ]
+            ]);
 
-                    $img_uploaded_result = $this->json($response);
+            if ($uploadserver = $this->json($response)) {
 
-                    $img_response = $this->client->post(self::API_HOST . 'photos.saveMessagesPhoto', [
-                        'form_params' => $img_uploaded_result,
-                        'query' => [
-                            'access_token' => $this->accessToken
+                $uploadserver = array_shift($uploadserver);
+
+                foreach ($attachments as $attachment) {
+
+                    if ($response = $this->client->request('POST', $uploadserver['upload_url'], [
+                        'multipart' => [
+                            [
+                                'name' => 'photo',
+                                'contents' => fopen($attachment->getFile(), 'r'),
+                            ],
                         ]
-                    ]);
+                    ])
+                    ) {
 
-                    if ($img_to_att = $this->json($img_response)) {
+                        $img_uploaded_result = $this->json($response);
 
-                        $this->client->post(self::API_HOST . 'messages.send', [
-                            'form_params' => array(
-                                'user_id' => $userId,
-                                'attachment' => 'photo' . $img_to_att['response'][0]['owner_id'] . '_' . $img_to_att['response'][0]['pid'],
-                            ),
+                        $img_response = $this->client->post(self::API_HOST . 'photos.saveMessagesPhoto', [
+                            'form_params' => $img_uploaded_result,
                             'query' => [
                                 'access_token' => $this->accessToken
                             ]
                         ]);
+
+                        if ($img_to_att = $this->json($img_response)) {
+
+                            $this->client->post(self::API_HOST . 'messages.send', [
+                                'form_params' => array(
+                                    'user_id' => $userId,
+                                    'attachment' => 'photo' . $img_to_att['response'][0]['owner_id'] . '_' . $img_to_att['response'][0]['pid'],
+                                ),
+                                'query' => [
+                                    'access_token' => $this->accessToken
+                                ]
+                            ]);
+                        }
                     }
                 }
             }

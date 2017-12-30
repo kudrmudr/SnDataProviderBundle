@@ -13,7 +13,7 @@ class Message
 
     protected $created;
 
-    protected $images = array();
+    protected $attachments = array();
 
     protected $user;
 
@@ -94,21 +94,17 @@ class Message
         return $this->user;
     }
 
-    /**
-     * @param string $image
-     * @return $this
-     */
-    public function addImage(string $image)
+    public function addAttachment(Attachment $attachment)
     {
-        $this->images[] = $image;
+        $this->attachments[] = $attachment;
         return $this;
     }
 
     /**
      * @return array
      */
-    public function getImages(): array
+    public function getAttachments(): array
     {
-        return $this->images;
+        return $this->attachments;
     }
 }

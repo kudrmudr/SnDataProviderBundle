@@ -4,6 +4,7 @@ namespace kudrmudr\SnDataProviderBundle\Provider;
 
 use kudrmudr\SnDataProviderBundle\Entity\Language;
 use kudrmudr\SnDataProviderBundle\Entity\User;
+use kudrmudr\SnDataProviderBundle\Entity\Message;
 
 class Telegram extends AbstractProvider
 {
@@ -22,24 +23,24 @@ class Telegram extends AbstractProvider
      * @return mixed
      * @throws \Exception
      */
-    public function sendMessage(string $userId, string $text)
+    public function sendMessage(Message $message)
     {
-        if ($text) {
+        if ($message->getText()) {
 
-            $response = $this->client->post($this->getApiUrl() . 'sendMessage', [
+            $this->client->post($this->getApiUrl() . 'sendMessage', [
                 'json' => [
-                    'chat_id' => $userId,
-                    'text' => $text
+                    'chat_id' => $message->getUser()->getExId(),
+                    'text' => $message->getText()
                 ]
             ]);
-
-            return $this->json($response);
         }
+
+        $this->sendImages($message->getUser()->getExId(), $message->getAttachments());
     }
 
-    public function sendImages(string $userId, Array $images)
+    protected function sendImages(string $userId, array $attachments)
     {
-        foreach ($images as $image) {
+        foreach ($attachments as $attachment) {
 
             $this->client->post($this->getApiUrl() . 'sendPhoto', [
                 'multipart' => [
@@ -49,7 +50,7 @@ class Telegram extends AbstractProvider
                     ],
                     [
                         'name' => 'photo',
-                        'contents' => fopen($image, 'r')
+                        'contents' => fopen($attachment->getFile(), 'r')
                     ]
                 ]
             ]);
