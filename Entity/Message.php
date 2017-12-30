@@ -11,6 +11,8 @@ class Message
 
     protected $text;
 
+    protected $coordinates;
+
     protected $created;
 
     protected $attachments = array();
@@ -76,6 +78,24 @@ class Message
     }
 
     /**
+     * @param string $coordinates
+     * @return $this
+     */
+    public function setCoordinates(string $coordinates)
+    {
+        $this->coordinates = $coordinates;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoordinates(): string
+    {
+        return $this->coordinates;
+    }
+
+    /**
      * @param User $user
      * @return $this
      */
@@ -107,4 +127,5 @@ class Message
     {
         return $this->attachments;
     }
+
 }

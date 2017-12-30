@@ -12,6 +12,7 @@ use kudrmudr\SnDataProviderBundle\Provider\Facebook;
 
 use kudrmudr\SnDataProviderBundle\Entity\User;
 use kudrmudr\SnDataProviderBundle\Entity\Message;
+use kudrmudr\SnDataProviderBundle\Entity\Attachment;
 
 use kudrmudr\SnDataProviderBundle\Event\MessageEvent;
 
@@ -39,11 +40,44 @@ class DefaultController extends Controller
                 $message->setUser($user);
                 $message->setText($data['object']['body']);
 
+                if (isset($data['object']['attachments'])) {
+
+                    foreach ($data['object']['attachments'] as $att) {
+
+                        $attachment = new Attachment();
+                        $attachment->setExId($att[$att['type']]['id']);
+
+                        if ($att['type'] == 'photo') {
+
+                            $attachment->setType(Attachment::TYPE_IMAGE);
+
+                            foreach ($att['photo'] as $att_key=>$att_val) {
+
+                                if (substr($att_key,0,5) == 'photo') {
+
+                                    $attachment->setFile($att_val);
+                                }
+                            }
+
+                        } elseif ($att['type'] == 'doc') {
+
+                            $attachment->setType(Attachment::TYPE_FILE);
+                            $attachment->setFile($att['doc']['url']);
+                        }
+
+                        $message->addAttachment($attachment);
+                    }
+                }
+
+                if (isset($data['object']['geo'])) {
+
+                    $message->setCoordinates(str_replace(' ', ', ', $data['object']['geo']['coordinates']));
+
+                }
+
                 $this->messageEventDispatch($message);
             }
         }
-
-        $this->container->get('logger')->error('VK----'.$request->getContent());
 
         return new Response('ok');
     }
