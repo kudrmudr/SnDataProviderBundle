@@ -30,13 +30,29 @@ class Facebook extends AbstractProvider
 
     public function sendImages(string $userId, Array $images)
     {
-        /*
-         foreach ($images as $image) {
-             $res = $this->client->send(new ImageMessage($userId, $image));
 
-             print_R($res);
+         foreach ($images as $image) {
+
+             $response = $this->client->post(self::API_HOST . 'me/messages', [
+                 'multipart' => [
+                     [
+                         'name' => 'recipient',
+                         'contents' => '{"id": "'.$userId.'"}',
+                     ],
+                     [
+                         'name' => 'message',
+                         'contents' => '{"attachment":{"type":"image", "payload":{"is_reusable":true}}}',
+                     ],
+                     [
+                         'name' => 'filedata',
+                         'contents' => fopen($image, 'r')
+                     ]
+                 ],
+                 'query' => [
+                     'access_token' => $this->accessToken
+                 ]
+             ]);
          }
-         */
     }
 
     /**
