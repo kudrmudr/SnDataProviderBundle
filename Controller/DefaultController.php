@@ -94,7 +94,44 @@ class DefaultController extends Controller
 
             $message = new Message();
             $message->setUser($user);
-            $message->setText($data['message']['text']);
+
+            if (isset($data['message']['text'])) {
+                $message->setText($data['message']['text']);
+            }
+
+            if (isset($data['message']['photo'])) {
+
+                $attachment = new Attachment();
+
+                $file = end($data['message']['photo']);
+                $attachment->setFile($this->get(Telegram::class)->getFile($file['file_id']));
+                $attachment->setType(Attachment::TYPE_IMAGE);
+                $message->addAttachment($attachment);
+            }
+
+            if (isset($data['message']['photo'])) {
+
+                $attachment = new Attachment();
+
+                $file = end($data['message']['photo']);
+                $attachment->setFile($this->get(Telegram::class)->getFile($file['file_id']));
+                $attachment->setType(Attachment::TYPE_IMAGE);
+                $message->addAttachment($attachment);
+            }
+
+            if (isset($data['message']['document'])) {
+
+                $attachment = new Attachment();
+
+                $attachment->setFile($this->get(Telegram::class)->getFile($data['message']['document']['file_id']));
+                $attachment->setType(Attachment::TYPE_FILE);
+
+                if (substr($data['message']['document']['mime_type'],0,5) == 'image') {
+                    $attachment->setType(Attachment::TYPE_IMAGE);
+                }
+
+                $message->addAttachment($attachment);
+            }
 
             $this->messageEventDispatch($message);
         }
