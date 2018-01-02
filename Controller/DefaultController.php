@@ -167,20 +167,23 @@ class DefaultController extends Controller
                         {
                             foreach ($fbMessage['message']['attachments'] as $att) {
 
-                                $attachment = new Attachment();
-                                $attachment->setFile($att['payload']['url']);
+                                if ($att['payload']['url']) {
+                                    
+                                    $attachment = new Attachment();
+                                    $attachment->setFile($att['payload']['url']);
 
-                                if ($att['type'] == 'image') {
-                                    $attachment->setType(Attachment::TYPE_IMAGE);
-                                } elseif ($att['type'] == 'file') {
-                                    $attachment->setType(Attachment::TYPE_FILE);
-                                } elseif ($att['type'] == 'video') {
-                                    $attachment->setType(Attachment::TYPE_VIDEO);
-                                } elseif ($att['type'] == 'audio') {
-                                    $attachment->setType(Attachment::TYPE_AUDIO);
+                                    if ($att['type'] == 'image') {
+                                        $attachment->setType(Attachment::TYPE_IMAGE);
+                                    } elseif ($att['type'] == 'file') {
+                                        $attachment->setType(Attachment::TYPE_FILE);
+                                    } elseif ($att['type'] == 'video') {
+                                        $attachment->setType(Attachment::TYPE_VIDEO);
+                                    } elseif ($att['type'] == 'audio') {
+                                        $attachment->setType(Attachment::TYPE_AUDIO);
+                                    }
+
+                                    $message->addAttachment($attachment);
                                 }
-
-                                $message->addAttachment($attachment);
                             }
                         }
 
