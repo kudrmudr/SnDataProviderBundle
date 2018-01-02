@@ -10,6 +10,7 @@ use kudrmudr\SnDataProviderBundle\Provider\Vk;
 use kudrmudr\SnDataProviderBundle\Provider\Telegram;
 use kudrmudr\SnDataProviderBundle\Provider\Facebook;
 
+use kudrmudr\SnDataProviderBundle\Entity\Language;
 use kudrmudr\SnDataProviderBundle\Entity\User;
 use kudrmudr\SnDataProviderBundle\Entity\Message;
 use kudrmudr\SnDataProviderBundle\Entity\Attachment;
@@ -70,9 +71,7 @@ class DefaultController extends Controller
                 }
 
                 if (isset($data['object']['geo'])) {
-
                     $message->setCoordinates(str_replace(' ', ', ', $data['object']['geo']['coordinates']));
-
                 }
 
                 $this->messageEventDispatch($message);
@@ -86,11 +85,16 @@ class DefaultController extends Controller
     {
         if ($content = $request->getContent() AND $data = json_decode($content, true)) {
 
+            $language = new Language();
+            $language->setCode(stristr($data['message']['from']['language_code'], '-', true));
+
             $user = new User();
+            $user->setLanguage($language);
             $user->setExId($data['message']['from']['id']);
             $user->setProviderName(Telegram::class);
             $user->setFirstName($data['message']['from']['first_name']);
             $user->setLastName($data['message']['from']['last_name']);
+            $user->setLogin($data['message']['from']['username']);
 
             $message = new Message();
             $message->setUser($user);

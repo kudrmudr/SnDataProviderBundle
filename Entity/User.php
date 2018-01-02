@@ -52,7 +52,7 @@ class User
         return $this;
     }
 
-    public function getLanguage(): Language
+    public function getLanguage(): ?Language
     {
         return $this->language;
     }
@@ -61,7 +61,7 @@ class User
      * @param $login
      * @return $this
      */
-    public function setLogin(string $login)
+    public function setLogin(?string $login)
     {
         $this->login = $login;
 
@@ -77,7 +77,7 @@ class User
     }
 
 
-    public function setFirstName($firstName = null)
+    public function setFirstName(?string $firstName)
     {
         $this->first_name = $firstName;
 
@@ -96,7 +96,7 @@ class User
      *
      * @return User
      */
-    public function setLastName($lastName = null)
+    public function setLastName(?string $lastName)
     {
         $this->last_name = $lastName;
 
