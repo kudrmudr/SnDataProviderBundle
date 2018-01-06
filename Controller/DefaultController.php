@@ -2,7 +2,6 @@
 
 namespace kudrmudr\SnDataProviderBundle\Controller;
 
-use AppBundle\Entity\Phrase;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,13 +57,13 @@ class DefaultController extends Controller
                         $attachment = new Attachment();
                         $attachment->setExId($att[$att['type']]['id']);
 
-                        if ($att['type'] == 'photo') {
+                        if ($att['type'] == 'photo' || $att['type'] == 'sticker') {
 
                             $attachment->setType(Attachment::TYPE_IMAGE);
 
-                            foreach ($att['photo'] as $att_key=>$att_val) {
+                            foreach ($att[$att['type']] as $att_key => $att_val) {
 
-                                if (substr($att_key,0,5) == 'photo') {
+                                if (substr($att_key, 0, 5) == 'photo') {
 
                                     $attachment->setFile($att_val);
                                 }
@@ -74,6 +73,12 @@ class DefaultController extends Controller
 
                             $attachment->setType(Attachment::TYPE_FILE);
                             $attachment->setFile($att['doc']['url']);
+                        } elseif ($att['type'] == 'doc') {
+
+                            $attachment->setType(Attachment::TYPE_FILE);
+                            $attachment->setFile($att['doc']['url']);
+                        } else {
+                            continue;
                         }
 
                         $message->addAttachment($attachment);
@@ -146,7 +151,7 @@ class DefaultController extends Controller
                 $attachment->setFile($this->get(Telegram::class)->getFile($data['message']['document']['file_id']));
                 $attachment->setType(Attachment::TYPE_FILE);
 
-                if (substr($data['message']['document']['mime_type'],0,5) == 'image') {
+                if (substr($data['message']['document']['mime_type'], 0, 5) == 'image') {
                     $attachment->setType(Attachment::TYPE_IMAGE);
                 }
 
@@ -177,7 +182,7 @@ class DefaultController extends Controller
 
                         $dateCreated = new \DateTime();
                         if ($fbMessage['timestamp']) {
-                            $dateCreated->setTimestamp($fbMessage['timestamp']/1000);
+                            $dateCreated->setTimestamp($fbMessage['timestamp'] / 1000);
                         }
                         $message->setCreated($dateCreated);
 
@@ -185,12 +190,11 @@ class DefaultController extends Controller
                             $message->setText($fbMessage['message']['text']);
                         }
 
-                        if (isset($fbMessage['message']['attachments']))
-                        {
+                        if (isset($fbMessage['message']['attachments'])) {
                             foreach ($fbMessage['message']['attachments'] as $att) {
 
                                 if ($att['payload']['url']) {
-                                    
+
                                     $attachment = new Attachment();
                                     $attachment->setFile($att['payload']['url']);
 
@@ -220,9 +224,8 @@ class DefaultController extends Controller
 
     public function twitterAction(Request $request)
     {
-        $this->container->get('logger')->error('twitter'.$request->getContent());
+        $this->container->get('logger')->error('twitter' . $request->getContent());
 
         return new Response('ok');
     }
-
 }
