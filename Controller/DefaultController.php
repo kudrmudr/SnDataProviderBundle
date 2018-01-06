@@ -39,7 +39,10 @@ class DefaultController extends Controller
 
                 $message = new Message();
                 $message->setUser($user);
-                $message->setText($data['object']['body']);
+
+                if (isset($data['object']['body'])) {
+                    $message->setText($data['object']['body']);
+                }
 
                 if (isset($data['object']['attachments'])) {
 
@@ -159,7 +162,7 @@ class DefaultController extends Controller
                         $message = new Message();
                         $message->setUser($user);
 
-                        if ($fbMessage['message']['text']) {
+                        if (isset($fbMessage['message']['text'])) {
                             $message->setText($fbMessage['message']['text']);
                         }
 
