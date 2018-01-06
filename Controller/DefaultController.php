@@ -2,6 +2,7 @@
 
 namespace kudrmudr\SnDataProviderBundle\Controller;
 
+use AppBundle\Entity\Phrase;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +40,12 @@ class DefaultController extends Controller
 
                 $message = new Message();
                 $message->setUser($user);
+
+                $dateCreated = new \DateTime();
+                if ($data['object']['date']) {
+                    $dateCreated->setTimestamp($data['object']['date']);
+                }
+                $message->setCreated($dateCreated);
 
                 if (isset($data['object']['body'])) {
                     $message->setText($data['object']['body']);
@@ -102,6 +109,12 @@ class DefaultController extends Controller
             $message = new Message();
             $message->setUser($user);
 
+            $dateCreated = new \DateTime();
+            if ($data['message']['date']) {
+                $dateCreated->setTimestamp($data['message']['date']);
+            }
+            $message->setCreated($dateCreated);
+
             if (isset($data['message']['text'])) {
                 $message->setText($data['message']['text']);
             }
@@ -161,6 +174,11 @@ class DefaultController extends Controller
 
                         $message = new Message();
                         $message->setUser($user);
+
+                        $message->setCreated(new \DateTime());
+                        if ($fbMessage['timestamp']) {
+                            $message->setCreated(new \DateTime($fbMessage['timestamp']));
+                        }
 
                         if (isset($fbMessage['message']['text'])) {
                             $message->setText($fbMessage['message']['text']);
