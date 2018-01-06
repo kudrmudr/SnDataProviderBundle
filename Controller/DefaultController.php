@@ -175,10 +175,11 @@ class DefaultController extends Controller
                         $message = new Message();
                         $message->setUser($user);
 
-                        $message->setCreated(new \DateTime());
+                        $dateCreated = new \DateTime();
                         if ($fbMessage['timestamp']) {
-                            $message->setCreated(new \DateTime($fbMessage['timestamp']));
+                            $dateCreated->setTimestamp($fbMessage['timestamp']/1000);
                         }
+                        $message->setCreated($dateCreated);
 
                         if (isset($fbMessage['message']['text'])) {
                             $message->setText($fbMessage['message']['text']);
