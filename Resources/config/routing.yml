@@ -8,7 +8,7 @@ sn_provider_telegram:
 
 sn_provider_facebook:
   path:     /facebook
-  defaults: { _controller: SnDataProviderBundle:Default:facebook }
+  defaults: { _controller: SnDataProviderBundle:Facebook:index }
 
 sn_provider_twitter:
   path:     /twitter

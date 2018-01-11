@@ -8,7 +8,6 @@ use kudrmudr\SnDataProviderBundle\Entity\Message;
 
 class Facebook extends AbstractProvider
 {
-
     const API_HOST = 'https://graph.facebook.com/v2.11/';
 
     /**
@@ -25,17 +24,32 @@ class Facebook extends AbstractProvider
 
         if ($res = $this->json($response)) {
 
-            $language = new Language();
-            $language->setCode(stristr($res['locale'], '_', true));
-            $language->setName('None');
-
             $user = new User();
-            $user->setLanguage($language);
+
+            if (isset($res['locale'])) {
+                $language = new Language();
+                $language->setCode(stristr($res['locale'], '_', true));
+                $language->setName('None');
+                $user->setLanguage($language);
+            }
+
             $user->setProviderName(self::class);
             $user->setExId($res['id']);
-            $user->setFirstName($res['first_name']);
-            $user->setLastName($res['last_name']);
-            $user->setImage($res['profile_pic']);
+
+            if (isset($res['name'])) {
+                $nameAndLastname = explode(' ', $res['name']);
+                $user->setFirstName($nameAndLastname[0]);
+                $user->setLastName($nameAndLastname[1]);
+            }
+            if (isset($res['first_name'])) {
+                $user->setFirstName($res['first_name']);
+            }
+            if (isset($res['last_name'])) {
+                $user->setLastName($res['last_name']);
+            }
+            if (isset($res['profile_pic'])) {
+                $user->setImage($res['profile_pic']);
+            }
 
             return $user;
         }
@@ -89,5 +103,35 @@ class Facebook extends AbstractProvider
                 ]
             ]);
         }
+    }
+
+    /**
+     * @param Message $message
+     */
+    public function sendPost(Message $message)
+    {
+        if ($message->getParentId() && $message->getText()) {
+
+            $this->client->post(self::API_HOST . $message->getParentId() . '/comments', [
+                'form_params' => [
+                    'message' => $message->getText()
+                ],
+                'query' => [
+                    'access_token' => $this->accessToken
+                ]
+            ]);
+        } elseif ($message->getText()) {
+
+            $this->client->post(self::API_HOST . 'me/feed', [
+                'form_params' => [
+                    'message' => $message->getText()
+                ],
+                'query' => [
+                    'access_token' => $this->accessToken
+                ]
+            ]);
+
+        }
+
     }
 }

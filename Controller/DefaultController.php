@@ -163,65 +163,6 @@ class DefaultController extends Controller
         return new Response('ok');
     }
 
-    public function facebookAction(Request $request)
-    {
-        if ($content = $request->getContent() AND $data = json_decode($content, true)) {
-
-            if (!empty($data['entry'][0]['messaging'])) {
-
-                foreach ($data['entry'][0]['messaging'] as $fbMessage) {
-
-                    if (isset($fbMessage['message'])) {
-
-                        $user = new User();
-                        $user->setExId($fbMessage['sender']['id']);
-                        $user->setProviderName(Facebook::class);
-
-                        $message = new Message();
-                        $message->setUser($user);
-
-                        $dateCreated = new \DateTime();
-                        if ($fbMessage['timestamp']) {
-                            $dateCreated->setTimestamp($fbMessage['timestamp'] / 1000);
-                        }
-                        $message->setCreated($dateCreated);
-
-                        if (isset($fbMessage['message']['text'])) {
-                            $message->setText($fbMessage['message']['text']);
-                        }
-
-                        if (isset($fbMessage['message']['attachments'])) {
-                            foreach ($fbMessage['message']['attachments'] as $att) {
-
-                                if ($att['payload']['url']) {
-
-                                    $attachment = new Attachment();
-                                    $attachment->setFile($att['payload']['url']);
-
-                                    if ($att['type'] == 'image') {
-                                        $attachment->setType(Attachment::TYPE_IMAGE);
-                                    } elseif ($att['type'] == 'file') {
-                                        $attachment->setType(Attachment::TYPE_FILE);
-                                    } elseif ($att['type'] == 'video') {
-                                        $attachment->setType(Attachment::TYPE_VIDEO);
-                                    } elseif ($att['type'] == 'audio') {
-                                        $attachment->setType(Attachment::TYPE_AUDIO);
-                                    }
-
-                                    $message->addAttachment($attachment);
-                                }
-                            }
-                        }
-
-                        $this->messageEventDispatch($message);
-                    }
-                }
-            }
-        }
-
-        return new Response('ok');
-    }
-
     public function twitterAction(Request $request)
     {
         $this->container->get('logger')->error('twitter' . $request->getContent());

@@ -20,6 +20,12 @@ class Driver
 
         $provider = $this->service_container->get($user->getProviderName());
 
-        $provider->sendMessage($message);
+        if ($message->getType() == Message::MSG_TYPE_PM) {
+            $provider->sendMessage($message);
+        }
+
+        if ($message->getType() == Message::MSG_TYPE_POST) {
+            $provider->sendPost($message);
+        }
     }
 }

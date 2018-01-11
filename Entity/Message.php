@@ -7,7 +7,15 @@ namespace kudrmudr\SnDataProviderBundle\Entity;
  */
 class Message
 {
+    const MSG_TYPE_PM = 'pm';
+
+    const MSG_TYPE_POST = 'post';
+
     protected $ex_id;
+
+    protected $type;
+
+    protected $parent_id;
 
     protected $text;
 
@@ -75,6 +83,44 @@ class Message
     public function getCreated(): \DateTime
     {
         return $this->created;
+    }
+
+    /**
+     * @param string $type
+     * @return $this
+     */
+    public function setType(string $type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $parent_id
+     * @return $this
+     */
+    public function setParentId(string $parent_id)
+    {
+        $this->parent_id = $parent_id;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParentId(): ?string
+    {
+        return $this->parent_id;
     }
 
     /**
