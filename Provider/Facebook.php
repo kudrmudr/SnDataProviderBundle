@@ -110,26 +110,25 @@ class Facebook extends AbstractProvider
      */
     public function sendPost(Message $message)
     {
-        $fields = array();
-
         if ($message->getParentId()) {
             $url = self::API_HOST . $message->getParentId() . '/comments';
         } else {
             $url = self::API_HOST . 'me/feed';
         }
 
-        $attachments = $message->getAttachments();
-        if ($attachments) {
-            $fields[] = array(
-                'name' => 'source',
-                'contents' => fopen($attachments[0]->getFile(), 'r')
-            );
-        }
+        $fields = array();
 
         if ($message->getText()) {
             $fields[] = array(
                 'name' => 'message',
                 'contents' => $message->getText(),
+            );
+        }
+
+        if ($attachments = $message->getAttachments()) {
+            $fields[] = array(
+                'name' => 'source',
+                'contents' => fopen($attachments[0]->getFile(), 'r')
             );
         }
 
