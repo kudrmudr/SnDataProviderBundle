@@ -39,7 +39,9 @@ class Facebook extends AbstractProvider
             if (isset($res['name'])) {
                 $nameAndLastname = explode(' ', $res['name']);
                 $user->setFirstName($nameAndLastname[0]);
-                $user->setLastName($nameAndLastname[1]);
+                if (isset($nameAndLastname[1])) {
+                    $user->setLastName($nameAndLastname[1]);
+                }
             }
             if (isset($res['first_name'])) {
                 $user->setFirstName($res['first_name']);
