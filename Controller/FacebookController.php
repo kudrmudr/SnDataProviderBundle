@@ -104,6 +104,24 @@ class FacebookController extends BaseController
             $message->setText($snMessage['message']);
         }
 
+        if (isset($snMessage['link'])) {
+
+            $attachment = new Attachment();
+            $attachment->setFile($snMessage['link']);
+
+            if ($snMessage['item'] == 'photo') {
+                $attachment->setType(Attachment::TYPE_IMAGE);
+                $attachment->setExId($snMessage['photo_id']);
+            } elseif ($snMessage['item'] == 'video') {
+                $attachment->setType(Attachment::TYPE_VIDEO);
+                $attachment->setExId($snMessage['video_id']);
+            } elseif ($snMessage['item'] == 'audio') {
+                $attachment->setType(Attachment::TYPE_AUDIO);
+            }
+
+            $message->addAttachment($attachment);
+        }
+
         $this->messageEventDispatch($message);
     }
 }

@@ -2,31 +2,19 @@
 
 namespace kudrmudr\SnDataProviderBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use kudrmudr\SnDataProviderBundle\Provider\Vk;
 use kudrmudr\SnDataProviderBundle\Provider\Telegram;
-use kudrmudr\SnDataProviderBundle\Provider\Facebook;
 
 use kudrmudr\SnDataProviderBundle\Entity\Language;
 use kudrmudr\SnDataProviderBundle\Entity\User;
 use kudrmudr\SnDataProviderBundle\Entity\Message;
 use kudrmudr\SnDataProviderBundle\Entity\Attachment;
 
-use kudrmudr\SnDataProviderBundle\Event\MessageEvent;
-
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
-    protected function messageEventDispatch(Message $message)
-    {
-        $this->container->get('event_dispatcher')->dispatch(
-            'sn_data_provider_message_event',
-            new MessageEvent($message)
-        );
-    }
-
     public function vkAction(Request $request)
     {
         if ($content = $request->getContent() AND $data = json_decode($content, true)) {
@@ -38,6 +26,8 @@ class DefaultController extends Controller
                 $user->setProviderName(Vk::class);
 
                 $message = new Message();
+                $message->setExId($data['object']['id']);
+                $message->setType(Message::MSG_TYPE_PM);
                 $message->setUser($user);
 
                 $dateCreated = new \DateTime();
@@ -112,6 +102,8 @@ class DefaultController extends Controller
             $user->setLogin($data['message']['from']['username']);
 
             $message = new Message();
+            $message->setExId($data['message']['message_id']);
+            $message->setType(Message::MSG_TYPE_PM);
             $message->setUser($user);
 
             $dateCreated = new \DateTime();

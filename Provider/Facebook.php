@@ -81,14 +81,14 @@ class Facebook extends AbstractProvider
                 'multipart' => [
                     [
                         'name' => 'recipient',
-                        'contents' => '{"id": "'.$message->getUser()->getExId().'"}',
+                        'contents' => '{"id": "' . $message->getUser()->getExId() . '"}',
                     ],
                     [
                         'name' => 'message',
                         'contents' => '{                                 
                               "attachment":
                                     {
-                                        "type":"'.$attachment->getType().'",
+                                        "type":"' . $attachment->getType() . '",
                                         "payload": { "is_reusable":true }
                                     }
                               }',
@@ -110,28 +110,36 @@ class Facebook extends AbstractProvider
      */
     public function sendPost(Message $message)
     {
-        if ($message->getParentId() && $message->getText()) {
+        $fields = array();
 
-            $this->client->post(self::API_HOST . $message->getParentId() . '/comments', [
-                'form_params' => [
-                    'message' => $message->getText()
-                ],
-                'query' => [
-                    'access_token' => $this->accessToken
-                ]
-            ]);
-        } elseif ($message->getText()) {
-
-            $this->client->post(self::API_HOST . 'me/feed', [
-                'form_params' => [
-                    'message' => $message->getText()
-                ],
-                'query' => [
-                    'access_token' => $this->accessToken
-                ]
-            ]);
-
+        if ($message->getParentId()) {
+            $url = self::API_HOST . $message->getParentId() . '/comments';
+        } else {
+            $url = self::API_HOST . 'me/feed';
         }
 
+        $attachments = $message->getAttachments();
+        if ($attachments) {
+            $fields[] = array(
+                'name' => 'source',
+                'contents' => fopen($attachments[0]->getFile(), 'r')
+            );
+        }
+
+        if ($message->getText()) {
+            $fields[] = array(
+                'name' => 'message',
+                'contents' => $message->getText(),
+            );
+        }
+
+        if ($fields) {
+            $this->client->post($url, [
+                'multipart' => $fields,
+                'query' => [
+                    'access_token' => $this->accessToken
+                ]
+            ]);
+        }
     }
 }

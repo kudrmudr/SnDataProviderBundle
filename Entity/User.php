@@ -21,6 +21,10 @@ class User
 
     protected $image;
 
+    /**
+     * @param string $ex_id
+     * @return $this
+     */
     public function setExId(string $ex_id)
     {
         $this->ex_id = $ex_id;
@@ -28,11 +32,18 @@ class User
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getExId(): string
     {
         return $this->ex_id;
     }
 
+    /**
+     * @param string $provider_nam
+     * @return $this
+     */
     public function setProviderName(string $provider_nam)
     {
         $this->provider_name = $provider_nam;
@@ -40,11 +51,18 @@ class User
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getProviderName(): string
     {
         return $this->provider_name;
     }
 
+    /**
+     * @param Language $language
+     * @return $this
+     */
     public function setLanguage(Language $language)
     {
         $this->language = $language;
@@ -52,6 +70,9 @@ class User
         return $this;
     }
 
+    /**
+     * @return Language|null
+     */
     public function getLanguage(): ?Language
     {
         return $this->language;
@@ -76,7 +97,10 @@ class User
         return $this->login;
     }
 
-
+    /**
+     * @param null|string $firstName
+     * @return $this
+     */
     public function setFirstName(?string $firstName)
     {
         $this->first_name = $firstName;
@@ -84,6 +108,9 @@ class User
         return $this;
     }
 
+    /**
+     * @return null|string
+     */
     public function getFirstName(): ?string
     {
         return $this->first_name;
