@@ -44,6 +44,7 @@ class FacebookController extends BaseController
         $user->setProviderName(Facebook::class);
 
         $message = new Message();
+        $message->setExId($snMessage['message']['mid']);
         $message->setType(Message::MSG_TYPE_PM);
         $message->setUser($user);
 
@@ -90,9 +91,10 @@ class FacebookController extends BaseController
         $user->setProviderName(Facebook::class);
 
         $message = new Message();
-        $message->setUser($user);
-        $message->setType(Message::MSG_TYPE_POST);
         $message->setExId($snMessage['post_id']);
+        $message->setType(Message::MSG_TYPE_POST);
+        $message->setUser($user);
+
 
         $dateCreated = new \DateTime();
         if ($snMessage['created_time']) {
