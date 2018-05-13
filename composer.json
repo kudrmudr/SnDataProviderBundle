@@ -2,10 +2,10 @@
   "name": "kudrmudr/sn-data-provider-bundle",
   "description": "",
   "type": "library",
-  "license": "Proprietary",
+  "license": "MIT",
   "authors": [
     {
-      "name": "",
+      "name": "Konstantin Plotkin",
       "email": "kudrikkk@yandex.ru"
     }
   ],
