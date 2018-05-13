@@ -9,6 +9,7 @@ use kudrmudr\SnDataProviderBundle\Entity\Message;
 class Vk extends AbstractProvider
 {
     const API_HOST = 'https://api.vk.com/method/';
+    const API_VERSION = '5.74';
 
     /**
      * @param string $userId
@@ -20,6 +21,8 @@ class Vk extends AbstractProvider
             'query' => [
                 'user_ids' => $userId,
                 'fields' => 'photo_max_orig',
+                'access_token' => $this->accessToken,
+                'v' => self::API_VERSION,
             ]
         ]);
 
@@ -57,10 +60,11 @@ class Vk extends AbstractProvider
             $this->client->post(self::API_HOST . 'messages.send', [
                 'form_params' => [
                     'user_id' => $message->getUser()->getExId(),
-                    'message' => $message->getText()
+                    'message' => $message->getText(),
                 ],
                 'query' => [
-                    'access_token' => $this->accessToken
+                    'access_token' => $this->accessToken,
+                    'v' => self::API_VERSION,
                 ]
             ]);
         }
@@ -70,11 +74,12 @@ class Vk extends AbstractProvider
 
     protected function sendImages(string $userId, Array $attachments)
     {
-        if (count($attachments)>0) {
+        if (count($attachments) > 0) {
 
             $response = $this->client->get(self::API_HOST . 'photos.getMessagesUploadServer', [
                 'query' => [
-                    'access_token' => $this->accessToken
+                    'access_token' => $this->accessToken,
+                    'v' => self::API_VERSION,
                 ]
             ]);
 
@@ -99,7 +104,8 @@ class Vk extends AbstractProvider
                         $img_response = $this->client->post(self::API_HOST . 'photos.saveMessagesPhoto', [
                             'form_params' => $img_uploaded_result,
                             'query' => [
-                                'access_token' => $this->accessToken
+                                'access_token' => $this->accessToken,
+                                'v' => self::API_VERSION,
                             ]
                         ]);
 
@@ -108,10 +114,11 @@ class Vk extends AbstractProvider
                             $this->client->post(self::API_HOST . 'messages.send', [
                                 'form_params' => array(
                                     'user_id' => $userId,
-                                    'attachment' => 'photo' . $img_to_att['response'][0]['owner_id'] . '_' . $img_to_att['response'][0]['pid'],
+                                    'attachment' => 'photo' . $img_to_att['response'][0]['owner_id'] . '_' . $img_to_att['response'][0]['id'],
                                 ),
                                 'query' => [
-                                    'access_token' => $this->accessToken
+                                    'access_token' => $this->accessToken,
+                                    'v' => self::API_VERSION,
                                 ]
                             ]);
                         }
